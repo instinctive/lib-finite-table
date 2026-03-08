@@ -33,4 +33,4 @@ GHC version: 9.10.3
 - `finite-table.cabal` — package definition
 - `src/Data/FiniteTable.hs` — boxed module
 - `src/Data/FiniteTable/Unboxed.hs` — unboxed module
-- `test/Spec.hs` — Hspec test suite (38 tests)
+- `test/Spec.hs` — Hspec test suite (44 tests)

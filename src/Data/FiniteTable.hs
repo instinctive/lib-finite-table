@@ -42,6 +42,11 @@ el i f (Table v) = (\a -> Table (V.unsafeUpd v [(idx, a)])) <$> f (V.unsafeIndex
 toIndex :: forall i. (Bounded i, Enum i) => Int -> i
 toIndex n = toEnum (n + fromEnum (minBound :: i))
 
+instance (Bounded i, Enum i) => Applicative (Table i) where
+  pure a = tabulate (const a)
+  Table fs <*> Table xs = Table (V.zipWith ($) fs xs)
+  liftA2 f (Table as) (Table bs) = Table (V.zipWith f as bs)
+
 instance Functor (Table i) where
   fmap f (Table v) = Table (fmap f v)
 

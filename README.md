@@ -31,14 +31,16 @@ over (el Green) (++ "!") colorTable   -- modified table
 ## Modules
 
 - **`Data.FiniteTable`** — Boxed variant. No constraints on the element type.
-  Provides `Functor`, `Foldable`, `Traversable`, `FunctorWithIndex`,
-  `FoldableWithIndex`, `TraversableWithIndex`, `Semigroup`, and `Monoid`
-  instances.
+  Provides `Functor`, `Foldable`, `Traversable`, `Applicative`,
+  `FunctorWithIndex`, `FoldableWithIndex`, `TraversableWithIndex`, `Semigroup`,
+  and `Monoid` instances. The `Applicative` instance is zippy: `pure` creates a
+  constant table and `<*>`/`liftA2` combine element-wise.
 
 - **`Data.FiniteTable.Unboxed`** — Unboxed variant. Requires `Unbox a` on
-  elements. Since `Functor`/`Foldable`/`Traversable` cannot have constrained
-  element types, equivalent functionality is provided as standalone functions:
-  `map`, `imap`, `foldMap`, `ifoldMap`, `traverse`, `itraverse`.
+  elements. Since `Functor`/`Foldable`/`Traversable`/`Applicative` cannot have
+  constrained element types, equivalent functionality is provided as standalone
+  functions: `pure`, `zipWith`, `map`, `imap`, `foldMap`, `ifoldMap`,
+  `traverse`, `itraverse`.
 
 Both modules export the same core API:
 

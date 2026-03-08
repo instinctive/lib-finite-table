@@ -1,3 +1,4 @@
+{-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE TypeApplications #-}
 
 module Main (main) where
@@ -77,6 +78,25 @@ boxedTests = describe "Data.FiniteTable (boxed)" $ do
     it "traverse with Nothing short-circuits" $ do
       let t = traverse (\s -> if s == "B" then Nothing else Just s) abc
       t `shouldBe` (Nothing :: Maybe (Table ABC String))
+
+  describe "Applicative" $ do
+    it "pure creates a constant table" $ do
+      let t = Prelude.pure "x" :: Table ABC String
+      T.index t A `shouldBe` "x"
+      T.index t B `shouldBe` "x"
+      T.index t C `shouldBe` "x"
+
+    it "<*> applies functions element-wise" $ do
+      let fs = T.tabulate @ABC $ \case A -> (++ "!"); B -> (++ "?"); C -> reverse
+      let t = fs <*> abc
+      T.index t A `shouldBe` "A!"
+      T.index t B `shouldBe` "B?"
+      T.index t C `shouldBe` "C"
+
+    it "liftA2 combines element-wise" $ do
+      let t = liftA2 (++) abc (T.tabulate (\i -> ":" ++ show i))
+      T.index t A `shouldBe` "A:A"
+      T.index t B `shouldBe` "B:B"
 
   describe "Semigroup" $ do
     it "combines element-wise" $ do
@@ -187,6 +207,25 @@ unboxedTests = describe "Data.FiniteTable.Unboxed" $ do
     it "provides the index" $ do
       let t = U.itraverse (\i v -> Just (fromEnum i * 10 + v)) uabc
       fmap (\t' -> U.index t' C) t `shouldBe` Just 22
+
+  describe "pure/zipWith" $ do
+    it "pure creates a constant table" $ do
+      let t = U.pure @ABC 42 :: U.Table ABC Int
+      U.index t A `shouldBe` 42
+      U.index t B `shouldBe` 42
+      U.index t C `shouldBe` 42
+
+    it "zipWith combines element-wise" $ do
+      let t = U.zipWith (+) uabc (U.tabulate @ABC ((*10) . fromEnum))
+      U.index t A `shouldBe` 0
+      U.index t B `shouldBe` 11
+      U.index t C `shouldBe` 22
+
+    it "zipWith is symmetric" $ do
+      let t = U.zipWith (*) uabc uabc
+      U.index t A `shouldBe` 0
+      U.index t B `shouldBe` 1
+      U.index t C `shouldBe` 4
 
   describe "Semigroup" $ do
     it "combines element-wise" $ do

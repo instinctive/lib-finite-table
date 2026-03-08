@@ -11,6 +11,8 @@ module Data.FiniteTable.Unboxed
   , tabulate
   , index
   , el
+  , pure
+  , zipWith
   , map
   , imap
   , foldMap
@@ -19,7 +21,7 @@ module Data.FiniteTable.Unboxed
   , itraverse
   ) where
 
-import Prelude hiding (map, foldMap, traverse)
+import Prelude hiding (map, foldMap, traverse, pure, zipWith)
 import qualified Prelude
 import Control.Lens (Lens')
 import qualified Data.Vector.Unboxed as V
@@ -60,6 +62,14 @@ el i f (Table v) = (\a -> Table (V.modify (\mv -> MV.unsafeWrite mv idx a) v)) <
 
 toIndex :: forall i. (Bounded i, Enum i) => Int -> i
 toIndex n = toEnum (n + fromEnum (minBound :: i))
+
+-- | Create a table with the same value at every index.
+pure :: (Bounded i, Enum i, Unbox a) => a -> Table i a
+pure a = tabulate (const a)
+
+-- | Combine two tables element-wise with a function.
+zipWith :: (Unbox a, Unbox b, Unbox c) => (a -> b -> c) -> Table i a -> Table i b -> Table i c
+zipWith f (Table as) (Table bs) = Table (V.zipWith f as bs)
 
 -- | Map a function over all values.
 map :: (Unbox a, Unbox b) => (a -> b) -> Table i a -> Table i b

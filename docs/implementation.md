@@ -34,6 +34,7 @@ be `Bounded` and `Enum`; the element type `a` is unconstrained.
 
 - `Eq, Ord, Show` (derived)
 - `Functor, Foldable, Traversable`
+- `Applicative` (zippy: `pure` is constant, `<*>`/`liftA2` are element-wise)
 - `Semigroup` (element-wise, requires `Semigroup a`)
 - `Monoid` (via `tabulate (const mempty)`, requires `Monoid a`)
 - `FunctorWithIndex i, FoldableWithIndex i, TraversableWithIndex i` (from `lens`)
@@ -54,10 +55,10 @@ All operations require an `Unbox a` constraint.
 
 ### Differences from boxed
 
-- Cannot provide `Functor`, `Foldable`, `Traversable`, or the indexed
-  typeclasses as instances, because those classes require unconstrained element
-  types. Instead, standalone functions are exported: `map`, `imap`, `foldMap`,
-  `ifoldMap`, `traverse`, `itraverse`.
+- Cannot provide `Functor`, `Foldable`, `Traversable`, `Applicative`, or the
+  indexed typeclasses as instances, because those classes require unconstrained
+  element types. Instead, standalone functions are exported: `pure`, `zipWith`,
+  `map`, `imap`, `foldMap`, `ifoldMap`, `traverse`, `itraverse`.
 - `Eq`, `Ord`, `Show` are manual instances (can't derive through the newtype
   due to the `Unbox` constraint).
 - `el` uses `V.modify` with `MV.unsafeWrite` for the update (unboxed vectors
@@ -65,6 +66,6 @@ All operations require an `Unbox a` constraint.
 
 ## Test Suite
 
-Hspec tests in `test/Spec.hs` covering both modules (38 tests total). Tests
+Hspec tests in `test/Spec.hs` covering both modules (44 tests total). Tests
 exercise all exported functions and instances, including edge cases like
 single-element index types (`()`) and `Bool`.
