@@ -20,12 +20,14 @@ colorTable = tabulate show
 -- Total lookup — always succeeds
 index colorTable Green  -- "Green"
 
--- Total lens
+-- Total indexed lens
 import Control.Lens
 
 view (el Red) colorTable              -- "Red"
 set (el Blue) "Azul" colorTable       -- updated table
 over (el Green) (++ "!") colorTable   -- modified table
+iview (el Red) colorTable             -- (Red, "Red")
+iover (el Red) (\i s -> show i ++ ":" ++ s) colorTable  -- modified with index
 ```
 
 ## Modules
@@ -46,7 +48,7 @@ Both modules export the same core API:
 
 - `tabulate :: (Bounded i, Enum i) => (i -> a) -> Table i a`
 - `index :: (Bounded i, Enum i) => Table i a -> i -> a`
-- `el :: (Bounded i, Enum i) => i -> Lens' (Table i a) a`
+- `el :: (Bounded i, Enum i) => i -> IndexedLens' i (Table i a) a`
 
 ## Building
 

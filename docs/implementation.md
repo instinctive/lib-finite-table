@@ -28,7 +28,7 @@ be `Bounded` and `Enum`; the element type `a` is unconstrained.
 - `Table i a` — the type (constructor not exported)
 - `tabulate :: (Bounded i, Enum i) => (i -> a) -> Table i a`
 - `index :: (Bounded i, Enum i) => Table i a -> i -> a`
-- `el :: (Bounded i, Enum i) => i -> Lens' (Table i a) a` — total lens
+- `el :: (Bounded i, Enum i) => i -> IndexedLens' i (Table i a) a` — total indexed lens
 
 ### Instances
 
@@ -66,6 +66,7 @@ All operations require an `Unbox a` constraint.
 
 ## Test Suite
 
-Hspec tests in `test/Spec.hs` covering both modules (44 tests total). Tests
+Hspec tests in `test/Spec.hs` covering both modules (48 tests total). Tests
 exercise all exported functions and instances, including edge cases like
-single-element index types (`()`) and `Bool`.
+single-element index types (`()`) and `Bool`. The `el` tests cover both plain
+lens operations (`view`, `set`, `over`) and indexed operations (`iview`, `iover`).

@@ -5,7 +5,7 @@ finite, enumerated, bounded index type. Let's call this container a `Table`.
 `Table` should have instances for `Functor, Foldable, Traversable, Semigroup,
 Monoid,` provide `index` and `tabulate`, and provide the indexed traversals for
 the lens library: `FunctorWithIndex, FoldableWithIndex, TraversableWithIndex.`
-Also provide `el` a total lens.
+Also provide `el` a total indexed lens.
 
 ## Implementation
 

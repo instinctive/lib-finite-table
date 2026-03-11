@@ -13,7 +13,7 @@ module Data.FiniteTable
   , el
   ) where
 
-import Control.Lens (Lens', FunctorWithIndex(..), FoldableWithIndex(..), TraversableWithIndex(..))
+import Control.Lens (IndexedLens', indexed, FunctorWithIndex(..), FoldableWithIndex(..), TraversableWithIndex(..))
 import Data.Vector (Vector)
 import qualified Data.Vector as V
 
@@ -33,9 +33,9 @@ tabulate f = Table $ V.generate (size @i) (f . toEnum . (+ fromEnum (minBound ::
 index :: forall i a. (Bounded i, Enum i) => Table i a -> i -> a
 index (Table v) i = V.unsafeIndex v (fromEnum i - fromEnum (minBound :: i))
 
--- | A total lens into the element at a given index.
-el :: forall i a. (Bounded i, Enum i) => i -> Lens' (Table i a) a
-el i f (Table v) = (\a -> Table (V.unsafeUpd v [(idx, a)])) <$> f (V.unsafeIndex v idx)
+-- | A total indexed lens into the element at a given index.
+el :: forall i a. (Bounded i, Enum i) => i -> IndexedLens' i (Table i a) a
+el i f (Table v) = (\a -> Table (V.unsafeUpd v [(idx, a)])) <$> indexed f i (V.unsafeIndex v idx)
   where
     idx = fromEnum i - fromEnum (minBound :: i)
 

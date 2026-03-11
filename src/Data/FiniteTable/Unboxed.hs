@@ -23,7 +23,7 @@ module Data.FiniteTable.Unboxed
 
 import Prelude hiding (map, foldMap, traverse, pure, zipWith)
 import qualified Prelude
-import Control.Lens (Lens')
+import Control.Lens (IndexedLens', indexed)
 import qualified Data.Vector.Unboxed as V
 import qualified Data.Vector.Unboxed.Mutable as MV
 import Data.Vector.Unboxed (Vector, Unbox)
@@ -54,9 +54,9 @@ tabulate f = Table $ V.generate (size @i) (f . toEnum . (+ fromEnum (minBound ::
 index :: forall i a. (Bounded i, Enum i, Unbox a) => Table i a -> i -> a
 index (Table v) i = V.unsafeIndex v (fromEnum i - fromEnum (minBound :: i))
 
--- | A total lens into the element at a given index.
-el :: forall i a. (Bounded i, Enum i, Unbox a) => i -> Lens' (Table i a) a
-el i f (Table v) = (\a -> Table (V.modify (\mv -> MV.unsafeWrite mv idx a) v)) <$> f (V.unsafeIndex v idx)
+-- | A total indexed lens into the element at a given index.
+el :: forall i a. (Bounded i, Enum i, Unbox a) => i -> IndexedLens' i (Table i a) a
+el i f (Table v) = (\a -> Table (V.modify (\mv -> MV.unsafeWrite mv idx a) v)) <$> indexed f i (V.unsafeIndex v idx)
   where
     idx = fromEnum i - fromEnum (minBound :: i)
 

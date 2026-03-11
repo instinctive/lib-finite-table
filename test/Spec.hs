@@ -6,7 +6,7 @@ module Main (main) where
 import Data.FiniteTable (Table)
 import qualified Data.FiniteTable as T
 import qualified Data.FiniteTable.Unboxed as U
-import Control.Lens (view, set, over, imap, ifoldMap, itraverse)
+import Control.Lens (view, set, over, imap, ifoldMap, itraverse, iview, iover)
 import Data.Monoid (Sum(..))
 import Test.Hspec
 
@@ -51,6 +51,14 @@ boxedTests = describe "Data.FiniteTable (boxed)" $ do
     it "modifies an element with over" $ do
       let t = over (T.el A) (++ "!") abc
       T.index t A `shouldBe` "A!"
+      T.index t B `shouldBe` "B"
+
+    it "iview returns the index and value" $ do
+      iview (T.el B) abc `shouldBe` (B, "B")
+
+    it "iover provides the index to the modifier" $ do
+      let t = iover (T.el A) (\i s -> show i ++ ":" ++ s) abc
+      T.index t A `shouldBe` "A:A"
       T.index t B `shouldBe` "B"
 
   describe "Functor" $ do
@@ -170,6 +178,14 @@ unboxedTests = describe "Data.FiniteTable.Unboxed" $ do
       let t = over (U.el A) (* 10) uabc
       U.index t A `shouldBe` 0
       U.index t B `shouldBe` 1
+
+    it "iview returns the index and value" $ do
+      iview (U.el B) uabc `shouldBe` (B, 1)
+
+    it "iover provides the index to the modifier" $ do
+      let t = iover (U.el C) (\i v -> fromEnum i + v) uabc
+      U.index t C `shouldBe` 4
+      U.index t A `shouldBe` 0
 
   describe "map" $ do
     it "maps a function over all elements" $ do
